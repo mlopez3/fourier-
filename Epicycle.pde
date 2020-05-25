@@ -12,11 +12,13 @@ class Epicycle{
   // Constructor for intial epicycle. The complex number start determines starting position on the circle e^(i*t).
   // rev is the number of revolutions in [0,2pi] 
   Epicycle(Complex start, Complex centerpt,int rev){
-   angle = atan(start.im/start.re);
+   angle = angle(start);
    center = centerpt;
    n = rev;
    dia = 2*sqrt(pow(start.re,2)+pow(start.im,2));
-   pos = cAdd(center,start);
+   pos = cAdd(center,start);   
+   Complex num = new Complex(1,-1);
+   print(angle(num));   
   }
   
   // Constructor for subsequent epicyces. Has its center at the position pos of the prev epicycle epic.
@@ -24,9 +26,28 @@ class Epicycle{
    n = rev;
    ep = epic;
    center = epic.pos;
-   angle = atan(start.im/start.re);
+   angle = angle(start);
    dia = 2*sqrt(pow(start.re,2)+pow(start.im,2));
-   pos = new Complex (start.re,start.im);
+   pos = cAdd(center,start);
+  }
+  
+  float angle(Complex z){
+    if (z.re == 0){
+      return PI/2;
+    } else{
+      float theta = atan(abs(z.im)/abs(z.re));
+      if(z.re > 0 && z.im > 0){
+        return theta;
+      } else if (z.re < 0 && z.im > 0){
+        return PI - theta;
+      }
+      else if (z.re<0 && z.im<0){
+      return PI + theta;
+      }
+      else{
+        return 2*PI - theta;
+      }
+    }
   }
   
   // draw the epicycle in draw()
@@ -52,7 +73,7 @@ class Epicycle{
   
   // move the epicycle one time step for draw()
   void move(){
-    angle = angle + n*0.01 % 2*PI;
+    angle = angle + n*0.05;
     float newposx = dia/2 * cos(angle);
     float newposy = dia/2 * sin(angle);
     if (ep==null){
